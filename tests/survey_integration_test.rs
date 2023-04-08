@@ -1,6 +1,8 @@
 use actix_web::{middleware::Logger, test, web, App};
 use diesel::{prelude::*, r2d2};
-use llm_landing_page::models::surveys::{CreateSurveyDTO, Survey, GetSurveyPercentagesDTO, SurveyPercentageDTO};
+use llm_landing_page::models::surveys::{
+    CreateSurveyDTO, GetSurveyPercentagesDTO, Survey, SurveyPercentageDTO,
+};
 use llm_landing_page::services::survey_service::{
     create_survey, delete_survey, get_survey, get_survey_percentages,
 };
@@ -75,7 +77,7 @@ async fn survey_integration_test() {
         let resp_body: Survey = test::call_and_read_body_json(&mut app, req).await;
         assert_eq!(resp_body.id.to_string(), survey_uuid);
     }
-    
+
     // test get survey percentages
     let req = test::TestRequest::post()
         .uri("/surveys/percentages")
@@ -86,8 +88,16 @@ async fn survey_integration_test() {
 
     let resp_body: Vec<SurveyPercentageDTO> = test::call_and_read_body_json(&mut app, req).await;
     assert_eq!(resp_body.len(), 4);
-    let answer_one_percentage = resp_body.iter().find(|x| x.answer == "answer-one").unwrap().percentage;
-    let answer_two_percentage = resp_body.iter().find(|x| x.answer == "answer-two").unwrap().percentage;
+    let answer_one_percentage = resp_body
+        .iter()
+        .find(|x| x.answer == "answer-one")
+        .unwrap()
+        .percentage;
+    let answer_two_percentage = resp_body
+        .iter()
+        .find(|x| x.answer == "answer-two")
+        .unwrap()
+        .percentage;
     assert_eq!(answer_one_percentage, f64::from(40));
     assert_eq!(answer_two_percentage, f64::from(20));
 
@@ -99,5 +109,4 @@ async fn survey_integration_test() {
         let http_resp = test::call_service(&mut app, req).await;
         assert_eq!(http_resp.status(), 200);
     }
-
 }

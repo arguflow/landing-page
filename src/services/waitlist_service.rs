@@ -1,5 +1,5 @@
 use crate::data::database::DBPool;
-use actix_web::{delete, get, post, web, HttpResponse};
+use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 
 #[get("/waitlists/{waitlist_id}")]
 pub async fn get_waitlist(pool: web::Data<DBPool>, waitlist_id: web::Path<String>) -> HttpResponse {
@@ -49,11 +49,23 @@ pub async fn delete_waitlist(
 #[post("/waitlists")]
 pub async fn create_waitlist(
     pool: web::Data<DBPool>,
+    req: HttpRequest,
     create_waitlist_dto: web::Json<crate::models::waitlists::CreateWaitlistDTO>,
 ) -> HttpResponse {
+    let get_client_ip = || {
+        req.connection_info()
+            .realip_remote_addr()
+            .map(|ip| ip.to_string())
+    };
+    let client_ip = get_client_ip();
+
     let waitlist = web::block(move || {
         let mut conn = pool.get().unwrap();
-        crate::models::waitlists::create_waitlist(&mut conn, create_waitlist_dto.email.clone())
+        crate::models::waitlists::create_waitlist(
+            &mut conn,
+            client_ip,
+            create_waitlist_dto.email.clone(),
+        )
     })
     .await
     .unwrap();

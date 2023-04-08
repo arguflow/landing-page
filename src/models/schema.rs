@@ -5,6 +5,7 @@ diesel::table! {
         id -> Uuid,
         question -> Varchar,
         answer -> Varchar,
+        ip_address -> Nullable<Varchar>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -23,6 +24,7 @@ diesel::table! {
 diesel::table! {
     waitlists (id) {
         id -> Uuid,
+        ip_address -> Nullable<Varchar>,
         email -> Varchar,
         created_at -> Timestamp,
         updated_at -> Timestamp,

@@ -15,6 +15,7 @@ pub struct Survey {
     pub id: uuid::Uuid,
     pub question: String,
     pub answer: String,
+    pub ip_address: Option<String>,
     pub created_at: chrono::NaiveDateTime,
     pub updated_at: chrono::NaiveDateTime,
 }
@@ -38,6 +39,7 @@ pub struct GetSurveyPercentagesDTO {
 
 pub fn create_survey(
     conn: &mut DBConection,
+    request_ip_address: Option<String>,
     create_survey_dto: CreateSurveyDTO,
 ) -> Result<Survey, diesel::result::Error> {
     use crate::models::schema::surveys::dsl::surveys;
@@ -46,6 +48,7 @@ pub fn create_survey(
         id: uuid::Uuid::new_v4(),
         question: create_survey_dto.question,
         answer: create_survey_dto.answer,
+        ip_address: request_ip_address,
         created_at: Utc::now().naive_utc(),
         updated_at: Utc::now().naive_utc(),
     };

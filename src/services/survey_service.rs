@@ -1,5 +1,5 @@
 use crate::data::database::DBPool;
-use actix_web::{delete, get, post, web, HttpResponse};
+use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 
 #[get("/surveys/{survey_id}")]
 pub async fn get_survey(pool: web::Data<DBPool>, survey_id: web::Path<String>) -> HttpResponse {
@@ -46,11 +46,19 @@ pub async fn delete_survey(pool: web::Data<DBPool>, survey_id: web::Path<String>
 #[post("/surveys")]
 pub async fn create_survey(
     pool: web::Data<DBPool>,
+    req: HttpRequest,
     create_survey_dto: web::Json<crate::models::surveys::CreateSurveyDTO>,
 ) -> HttpResponse {
+    let get_client_ip = || {
+        req.connection_info()
+            .realip_remote_addr()
+            .map(|ip| ip.to_string())
+    };
+    let client_ip = get_client_ip();
+
     let survey = web::block(move || {
         let mut conn = pool.get().unwrap();
-        crate::models::surveys::create_survey(&mut conn, create_survey_dto.into_inner())
+        crate::models::surveys::create_survey(&mut conn, client_ip, create_survey_dto.into_inner())
     })
     .await
     .unwrap();

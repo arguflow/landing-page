@@ -11,6 +11,7 @@ use super::schema;
 #[diesel(table_name = schema::waitlists)]
 pub struct Waitlist {
     pub id: uuid::Uuid,
+    pub ip_address: Option<String>,
     pub email: String,
     pub created_at: chrono::NaiveDateTime,
     pub updated_at: chrono::NaiveDateTime,
@@ -23,12 +24,14 @@ pub struct CreateWaitlistDTO {
 
 pub fn create_waitlist(
     conn: &mut DBConection,
+    request_ip_address: Option<String>,
     user_email: String,
 ) -> Result<Waitlist, diesel::result::Error> {
     use crate::models::schema::waitlists::dsl::waitlists;
 
     let new_waitlist = Waitlist {
         id: uuid::Uuid::new_v4(),
+        ip_address: request_ip_address,
         email: user_email,
         created_at: Utc::now().naive_utc(),
         updated_at: Utc::now().naive_utc(),
