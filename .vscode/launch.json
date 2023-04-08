@@ -10,11 +10,30 @@
           "test",
         "--no-run",
         "--lib",
-        "--package=llm_docs_rs",
+        "--package=llm_landing_page",
         ],
         "filter": {
-          "name": "llm_docs_rs",
+          "name": "llm_landing_page",
           "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "Run integration tests llm-docs-rs",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+            "test",
+            "--no-run",
+            "--test=visit_integration_test",
+            "--package=llm_landing_page"
+        ],
+        "filter": {
+            "name": "visit_integration_test",
+            "kind": "test"
         }
       },
       "args": [],

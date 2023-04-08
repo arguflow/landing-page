@@ -1,6 +1,6 @@
-use llm_docs_rs;
+use llm_landing_page;
 fn main() {
-    let result = llm_docs_rs::main();
+    let result = llm_landing_page::main();
 
     match result {
         Ok(_) => (),
