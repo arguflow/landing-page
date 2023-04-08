@@ -12,5 +12,12 @@ services:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  rust_app:
+    build: .
+    container_name: rust_app
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db
 volumes:
   postgres-data:

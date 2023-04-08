@@ -3,6 +3,7 @@ pub mod models;
 pub mod services;
 
 use actix_web::{middleware::Logger, web, App, HttpServer};
+use data::database::run_migrations;
 use diesel::{prelude::*, r2d2};
 use env_logger::Env;
 use services::survey_service::{create_survey, get_survey_percentages};
@@ -17,6 +18,7 @@ pub async fn main() -> std::io::Result<()> {
     let pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
+    run_migrations(&mut pool.get().unwrap());
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
@@ -30,7 +32,7 @@ pub async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
-    .bind(("127.0.0.1", 8090))?
+    .bind(("0.0.0.0", 8090))?
     .run()
     .await
 }
