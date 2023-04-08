@@ -5,6 +5,7 @@ pub mod services;
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use diesel::{prelude::*, r2d2};
 use env_logger::Env;
+use services::survey_service::{create_survey, get_survey_percentages};
 use services::visit_service::create_visit;
 use services::waitlist_service::create_waitlist;
 
@@ -24,6 +25,8 @@ pub async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(create_visit)
             .service(create_waitlist)
+            .service(create_survey)
+            .service(get_survey_percentages)
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
