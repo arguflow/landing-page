@@ -1,24 +1,22 @@
-pub mod app;
-pub mod components;
-use cfg_if::cfg_if;
+pub mod data;
+pub mod models;
+pub mod services;
 
-cfg_if! {
-if #[cfg(feature = "hydrate")] {
+use actix_web::{middleware::Logger, App, HttpServer};
+use env_logger::Env;
+use services::survey_service::scrape;
 
-  use wasm_bindgen::prelude::wasm_bindgen;
+#[actix_web::main]
+pub async fn main() -> std::io::Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    #[wasm_bindgen]
-    pub fn hydrate() {
-      use app::*;
-      use leptos::*;
-
-      // initializes logging using the `log` crate
-      _ = console_log::init_with_level(log::Level::Debug);
-      console_error_panic_hook::set_once();
-
-      leptos::mount_to_body(move |cx| {
-          view! { cx, <App/> }
-      });
-    }
-}
+    HttpServer::new(|| {
+        App::new()
+            .service(scrape)
+            .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agent}i"))
+    })
+    .bind(("127.0.0.1", 8090))?
+    .run()
+    .await
 }
