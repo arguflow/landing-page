@@ -68,8 +68,7 @@ pub fn delete_visit(
 ) -> Result<usize, diesel::result::Error> {
     use crate::models::schema::visits::dsl::visits;
 
-    let result = diesel::delete(visits.filter(schema::visits::id.eq(visit_id)))
-        .execute(conn);
+    let result = diesel::delete(visits.filter(schema::visits::id.eq(visit_id))).execute(conn);
 
     match result {
         Ok(visit) => Ok(visit),

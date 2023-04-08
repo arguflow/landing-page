@@ -28,11 +28,11 @@
         "args": [
             "test",
             "--no-run",
-            "--test=visit_integration_test",
+            "--test=waitlist_integration_test",
             "--package=llm_landing_page"
         ],
         "filter": {
-            "name": "visit_integration_test",
+            "name": "waitlist_integration_test",
             "kind": "test"
         }
       },

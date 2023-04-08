@@ -1,6 +1,5 @@
-use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
-
 use crate::data::database::DBPool;
+use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 
 #[get("/visits/{visit_id}")]
 pub async fn get_visit(pool: web::Data<DBPool>, visit_id: web::Path<String>) -> HttpResponse {
@@ -48,7 +47,7 @@ pub async fn delete_visit(pool: web::Data<DBPool>, visit_id: web::Path<String>) 
 pub async fn create_visit(
     pool: web::Data<DBPool>,
     req: HttpRequest,
-    visit: web::Json<crate::models::visits::CreateVisitDTO>,
+    create_visit_dto: web::Json<crate::models::visits::CreateVisitDTO>,
 ) -> HttpResponse {
     let get_client_ip = || {
         req.connection_info()
@@ -59,7 +58,11 @@ pub async fn create_visit(
 
     let visit = web::block(move || {
         let mut conn = pool.get().unwrap();
-        crate::models::visits::create_visit(&mut conn, client_ip, visit.page_visited.clone())
+        crate::models::visits::create_visit(
+            &mut conn,
+            client_ip,
+            create_visit_dto.page_visited.clone(),
+        )
     })
     .await
     .unwrap();

@@ -6,6 +6,7 @@ use actix_web::{middleware::Logger, web, App, HttpServer};
 use diesel::{prelude::*, r2d2};
 use env_logger::Env;
 use services::visit_service::create_visit;
+use services::waitlist_service::create_waitlist;
 
 #[actix_web::main]
 pub async fn main() -> std::io::Result<()> {
@@ -22,6 +23,7 @@ pub async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .service(create_visit)
+            .service(create_waitlist)
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
