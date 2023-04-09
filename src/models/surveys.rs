@@ -30,6 +30,7 @@ pub struct CreateSurveyDTO {
 pub struct SurveyPercentageDTO {
     pub answer: String,
     pub percentage: f64,
+    pub count: i64,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -123,6 +124,7 @@ pub fn get_survey_percentages(
                 survey_percentages.push(SurveyPercentageDTO {
                     answer: survey_answer,
                     percentage: survey_percentage,
+                    count: survey_count as i64,
                 });
             }
             Ok(survey_percentages)
