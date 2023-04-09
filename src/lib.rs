@@ -2,6 +2,7 @@ pub mod data;
 pub mod models;
 pub mod services;
 
+use actix_cors::Cors;
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use data::database::run_migrations;
 use diesel::{prelude::*, r2d2};
@@ -22,13 +23,17 @@ pub async fn main() -> std::io::Result<()> {
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
+
     HttpServer::new(move || {
+        let cors = Cors::permissive();
+
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .service(create_visit)
             .service(create_waitlist)
             .service(create_survey)
             .service(get_survey_percentages)
+            .wrap(cors)
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
