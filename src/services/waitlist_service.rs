@@ -59,6 +59,8 @@ pub async fn create_waitlist(
     };
     let client_ip = get_client_ip();
 
+    log::info!("client_ip: {:?}", client_ip);
+
     let waitlist = web::block(move || {
         let mut conn = pool.get().unwrap();
         crate::models::waitlists::create_waitlist(
@@ -69,6 +71,8 @@ pub async fn create_waitlist(
     })
     .await
     .unwrap();
+
+    log::info!("waitlist: {:?}", waitlist);
 
     match waitlist {
         Ok(waitlist) => HttpResponse::Ok().json(waitlist),
